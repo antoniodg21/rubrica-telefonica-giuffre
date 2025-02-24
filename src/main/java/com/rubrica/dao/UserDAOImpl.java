@@ -6,7 +6,6 @@ public class UserDAOImpl implements UserDAO {
 
     private final Connection connection;
 
-    // Constructor injection della connessione
     public UserDAOImpl(Connection connection) {
         this.connection = connection;
     }

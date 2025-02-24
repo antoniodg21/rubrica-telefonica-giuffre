@@ -5,23 +5,19 @@ public class User {
     private String username;
     private String password;
 
-    // Empty constructor
     public User() {}
 
-    // Constructor without ID
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    // Full constructor with ID
     public User(int id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }

@@ -1,14 +1,14 @@
 package com.rubrica.view;
 
 import com.rubrica.controller.ContactService;
-import com.rubrica.dao.ContactDAO;
-import com.rubrica.dao.ContactDAOImpl;
 import com.rubrica.model.Contact;
-import com.rubrica.persistance.DatabaseConnection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 public class RubricaFrame extends JFrame {
@@ -29,40 +29,45 @@ public class RubricaFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Table setup
         String[] columns = {"ID", "Nome", "Cognome", "Numero di Telefono"};
         tableModel = new DefaultTableModel(columns, 0) {
-            @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false; // Non modificabile
             }
         };
-        contactTable = new JTable(tableModel);
-        contactTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane scrollPane = new JScrollPane(contactTable);
 
-        // Nasconde la colonna ID (indice 0)
+        contactTable = new JTable(tableModel);
         contactTable.getColumnModel().getColumn(0).setMinWidth(0);
         contactTable.getColumnModel().getColumn(0).setMaxWidth(0);
-        contactTable.getColumnModel().getColumn(0).setWidth(0);
+        contactTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Buttons
-        JButton newButton = new JButton("Nuovo");
-        JButton editButton = new JButton("Modifica");
-        JButton deleteButton = new JButton("Elimina");
+        JScrollPane scrollPane = new JScrollPane(contactTable);
 
-        // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(newButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
+        scrollPane.getViewport().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                contactTable.clearSelection();
+            }
+        });
 
-        // Layout setup
+        Icon newIcon = scaleIcon(UIManager.getIcon("FileView.fileIcon"), 18, 18);
+        Icon editIcon = scaleIcon(UIManager.getIcon("FileChooser.detailsViewIcon"), 18, 18);
+        Icon deleteIcon = scaleIcon(UIManager.getIcon("OptionPane.errorIcon"), 18, 18);
+
+        JToolBar toolBar = new JToolBar();
+        JButton newButton = new JButton("Nuovo", newIcon);
+        JButton editButton = new JButton("Modifica", editIcon);
+        JButton deleteButton = new JButton("Elimina", deleteIcon);
+
+        toolBar.add(newButton);
+        toolBar.add(editButton);
+        toolBar.add(deleteButton);
+
+        // Layout
         setLayout(new BorderLayout());
+        add(toolBar, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
 
-        // Button actions
         newButton.addActionListener(e -> openEditor(null));
 
         editButton.addActionListener(e -> {
@@ -72,7 +77,8 @@ public class RubricaFrame extends JFrame {
                 Contact contact = contactService.getContactById(contactId);
                 openEditor(contact);
             } else {
-                JOptionPane.showMessageDialog(this, "Seleziona un contatto da modificare.", "Nessuna selezione.", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Seleziona un contatto da modificare.",
+                        "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -83,20 +89,37 @@ public class RubricaFrame extends JFrame {
                 String fullName = tableModel.getValueAt(selectedRow, 1) + " " + tableModel.getValueAt(selectedRow, 2);
 
                 int confirm = JOptionPane.showConfirmDialog(this,
-                        "Sicuro di voler eliminare " + fullName + "?",
-                        "Conferma elimina",
+                        "Vuoi davvero eliminare " + fullName + "?",
+                        "Conferma Eliminazione",
                         JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     contactService.deleteContact(contactId);
                     loadContacts();
-                    JOptionPane.showMessageDialog(this, "Contatto eliminato correttamente.", "Eliminato", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Contatto eliminato con successo.",
+                            "Eliminato", JOptionPane.INFORMATION_MESSAGE);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Seleziona un contatto da eliminare.", "Nessuna selezione.", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Seleziona un contatto da eliminare.",
+                        "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
             }
         });
     }
+
+    private Icon scaleIcon(Icon originalIcon, int width, int height) {
+        BufferedImage bufferedImage = new BufferedImage(
+                originalIcon.getIconWidth(), originalIcon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB
+        );
+        Graphics2D g = bufferedImage.createGraphics();
+        originalIcon.paintIcon(null, g, 0, 0);
+        g.dispose();
+
+        Image scaledImage = bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaledImage);
+    }
+
+
 
     private void openEditor(Contact contact) {
         ContactEditorFrame editor = new ContactEditorFrame(this, contact);
@@ -116,12 +139,5 @@ public class RubricaFrame extends JFrame {
             };
             tableModel.addRow(rowData);
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            RubricaFrame frame = new RubricaFrame();
-            frame.setVisible(true);
-        });
     }
 }

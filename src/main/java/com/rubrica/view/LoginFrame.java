@@ -17,7 +17,6 @@ public class LoginFrame extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
 
-    // Nel costruttore di LoginFrame:
     private LoginService loginService;
 
     public LoginFrame() {
@@ -33,7 +32,6 @@ public class LoginFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Create fields panel
         JPanel fieldsPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         fieldsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
@@ -48,15 +46,12 @@ public class LoginFrame extends JFrame {
         fieldsPanel.add(passwordLabel);
         fieldsPanel.add(passwordField);
 
-        // Create button panel
         JPanel buttonPanel = new JPanel();
         loginButton = new JButton("Login");
         buttonPanel.add(loginButton);
 
-        // Add listeners
         loginButton.addActionListener(new LoginActionListener());
 
-        // Add panels to frame
         add(fieldsPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -98,8 +93,8 @@ public class LoginFrame extends JFrame {
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(LoginFrame.this,
-                        "Unable to connect to the database. Please check your connection settings.",
-                        "Database Connection Error",
+                        "Impossibile connettersi al database. controlla il file 'credenziali_database.properties'.",
+                        "Errore connessione database",
                         JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }

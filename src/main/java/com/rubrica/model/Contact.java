@@ -8,10 +8,8 @@ public class Contact {
     private String phoneNumber;
     private Integer age;
 
-    // Empty constructor
     public Contact() {}
 
-    // Constructor without id (for new inserts)
     public Contact(String firstName, String lastName, String address, String phoneNumber, Integer age) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -20,7 +18,6 @@ public class Contact {
         this.age = age;
     }
 
-    // Full constructor with id (useful for DB reads)
     public Contact(int id, String firstName, String lastName, String address, String phoneNumber, Integer age) {
         this.id = id;
         this.firstName = firstName;
@@ -30,7 +27,6 @@ public class Contact {
         this.age = age;
     }
 
-    // Getters and Setters
     public Integer getId() {
         return id;
     }
