@@ -9,7 +9,6 @@ public class ContactDAOImpl implements ContactDAO {
 
     private final Connection connection;
 
-    // Constructor injection della connessione
     public ContactDAOImpl(Connection connection) {
         this.connection = connection;
     }
