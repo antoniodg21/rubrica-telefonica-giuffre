@@ -131,7 +131,7 @@ public class ContactEditorFrame extends JDialog {
         // Validazione formato numero di telefono
         if (!phone.matches("^\\+?\\d+$")) {
             JOptionPane.showMessageDialog(this,
-                    "Numero di telefono non valido. Può contenere solo numeri ed eventialmente iniziare con '+'.",
+                    "Numero di telefono non valido. Può contenere solo numeri ed eventualmente iniziare con '+'.",
                     "Errore salvataggio", JOptionPane.ERROR_MESSAGE);
             return false;
         }
